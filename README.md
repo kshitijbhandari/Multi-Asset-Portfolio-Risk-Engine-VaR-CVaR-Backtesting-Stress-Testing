@@ -1,6 +1,6 @@
-# Portfolio Risk System — VaR & CVaR
+# Multi-Asset Portfolio Risk Engine — VaR, CVaR, Backtesting & Stress Testing
 
-A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Covers data ingestion, three VaR methods, CVaR (Expected Shortfall), statistical backtesting, and stress testing across historical crises — assembled into a single risk dashboard.
+A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Covers data ingestion, three VaR methods, CVaR (Expected Shortfall), statistical backtesting, stress testing across historical crises, and a GARCH(1,1)-t model that passes regulatory backtests — assembled into a single risk dashboard.
 
 ---
 
@@ -24,8 +24,8 @@ A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. C
 ## Pipeline
 
 ```
-Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6
- Data      VaR       CVaR     Backtest   Stress    Dashboard
+Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7
+ Data      VaR       CVaR     Backtest   Stress    Dashboard   GARCH-t
 ```
 
 Each phase saves results to `portfolio_data.pkl` which is loaded by the next phase.
@@ -100,7 +100,7 @@ Rolling 252-day out-of-sample VaR forecasts tested against actual returns.
 | Parametric | 106 | 113.1 | 4.69% | PASS | FAIL |
 | Monte Carlo | 105 | 113.1 | 4.64% | PASS | FAIL |
 
-All models pass Kupiec at 95% (correct frequency) but fail Christoffersen at both levels (exceptions cluster). For Historical Simulation at 99%: π11 = **14.3%** vs π01 = **1.35%** — after a VaR breach, another breach the next day is 10x more likely. Static models have no memory of volatility regimes.
+All models pass Kupiec at 95% (correct frequency) but fail Christoffersen at both levels — exceptions cluster. For Historical Simulation at 99%: π11 = **14.3%** vs π01 = **1.35%** — after a VaR breach, another breach the next day is 10x more likely. Static models have no memory of volatility regimes.
 
 ---
 
@@ -124,6 +124,44 @@ COVID's worst single day was **4x the 99% VaR**. The 2022 rate shock broke the s
 ### Phase 6 — Risk Dashboard
 
 All results assembled into a single publication-quality figure (`risk_dashboard.png`) with 6 panels: cumulative return and drawdown, VaR/CVaR summary table, rolling VaR vs actual returns, exception timeline, stress test bar chart, and backtesting results table.
+
+---
+
+### Phase 7 — GARCH(1,1) with Student-t Innovations
+
+#### Why static VaR models fail
+
+Phase 4 revealed two distinct failure modes in all three models:
+
+1. **Wrong frequency (Kupiec)** — too many exceptions at 99%, because normal-distribution-based thresholds underestimate how large tail losses actually are
+2. **Clustered exceptions (Christoffersen)** — after one VaR breach, another is 10x more likely the next day (π11 = 14.3%). Static windows are blind to volatility regimes
+
+#### The fix: GARCH(1,1)-t
+
+GARCH(1,1) models time-varying conditional volatility:
+
+```
+σ²_t = ω + α·ε²_{t-1} + β·σ²_{t-1}
+```
+
+After a large shock, σ_t rises — so the next day's VaR threshold automatically widens. Pairing this with **Student-t innovations** (instead of normal) adds fat-tailed quantiles that reflect the portfolio's actual excess kurtosis of 16.99.
+
+#### Results
+
+| Method | Exceptions | Expected | Act. Rate | π11 | Kupiec | Christoffersen |
+|---|---|---|---|---|---|---|
+| Hist Sim (static) | 35 | 22.6 | 1.55% | 0.1429 | FAIL | FAIL |
+| Parametric (static) | 50 | 22.6 | 2.21% | 0.1200 | FAIL | FAIL |
+| MC (static) | 49 | 22.6 | 2.17% | 0.0816 | FAIL | FAIL |
+| GARCH-Normal | 43 | 22.6 | 1.90% | 0.0465 | FAIL | FAIL |
+| **GARCH-t** | **24** | **22.6** | **1.06%** | **0.0417** | **PASS** | **PASS** |
+
+GARCH-t is the only model that passes both regulatory tests. The progression shows what each assumption costs:
+
+- **GARCH-Normal** fixed clustering (π11: 0.143 → 0.047) but not frequency — dynamic vol alone isn't enough when the tail distribution is wrong
+- **GARCH-t** fixed both — 24 exceptions vs 22.6 expected, and π11 collapsed to near the unconditional rate
+
+This mirrors the industry's own trajectory: pre-2008 banks used parametric VaR with normal distributions, underestimated tail risk, and failed backtests they didn't run. Basel III's response was to mandate CVaR and more robust volatility models.
 
 ---
 
@@ -153,14 +191,14 @@ phase_3_VaR_ES.ipynb
 phase_4_backtest_kupiek.ipynb
 phase_5_stress_testing.ipynb
 phase_6_risk_dashboard.ipynb
+phase_7_GARCH.ipynb
 ```
 
 ---
 
-## Known Limitations / Planned Work
+## Remaining Limitations
 
-- **Static volatility** — rolling window weights all days equally; GARCH(1,1) would fix the clustering failures in backtesting
-- **Monte Carlo assumes normality** — correlated shocks drawn from normal distribution; fat-tailed draws (Student-t) would make it a genuinely independent method
-- **Static covariance matrix** — breaks during regime changes (2022); DCC-GARCH or regime-switching needed
-- **Equal weighting only** — mean-variance optimization and efficient frontier analysis not yet implemented
+- **Static covariance matrix** — DCC-GARCH or regime-switching needed for correlation dynamics
+- **Equal weighting only** — mean-variance optimization and efficient frontier not yet implemented
 - **1-day horizon only** — multi-day VaR requires simulated paths, not √T scaling
+- **Monte Carlo normality** — MC still uses normal shocks; Student-t draws would make it a genuinely independent method
