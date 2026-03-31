@@ -1,6 +1,8 @@
-# Multi-Asset Portfolio Risk Engine — VaR, CVaR, Backtesting & Stress Testing
+# Multi-Asset Portfolio Risk Engine
 
-A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Covers data ingestion, three VaR methods, CVaR (Expected Shortfall), statistical backtesting, stress testing across historical crises, and a GARCH(1,1)-t model that passes regulatory backtests — assembled into a single risk dashboard.
+**Live app:** [multi-asset-portfolio-risk-engine.streamlit.app](https://multi-asset-portfolio-risk-engine-var-cvar-backtesting-stress.streamlit.app/)
+
+A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Covers data ingestion, three VaR methods, CVaR (Expected Shortfall), statistical backtesting, stress testing across historical crises, GARCH(1,1)-t dynamic volatility modelling, and mean-variance portfolio optimization — all assembled into a single risk research project across 8 notebook phases.
 
 ---
 
@@ -24,8 +26,8 @@ A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. C
 ## Pipeline
 
 ```
-Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7
- Data      VaR       CVaR     Backtest   Stress    Dashboard   GARCH-t
+Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8
+ Data      VaR       CVaR     Backtest   Stress    Dashboard   GARCH-t   Optimizer
 ```
 
 Each phase saves results to `portfolio_data.pkl` which is loaded by the next phase.
@@ -110,7 +112,6 @@ Historical crises and a hypothetical liquidity shock applied to the portfolio, c
 
 | Scenario | Worst Single Day | Dollar Loss | vs 99% VaR |
 |---|---|---|---|
-| GFC 2008–09 (simulated) | 0.23% avg/day | $288,750 total | — |
 | COVID Crash (Feb–Mar 2020) | **7.81%** | **$78,102** | **4.14x** |
 | Rate Shock 2022 | 3.75% | $37,526 | 1.99x |
 | Hypothetical Liquidity Shock | 10.38% | $103,750 | 5.49x |
@@ -165,6 +166,38 @@ This mirrors the industry's own trajectory: pre-2008 banks used parametric VaR w
 
 ---
 
+### Phase 8 — Efficient Frontier & Portfolio Optimization
+
+Phases 1–7 treated equal-weighting as given. Phase 8 asks: given the same 8 assets, what is the optimal allocation?
+
+The mean-variance optimization problem is solved with long-only constraints (no shorting) across 60 target return levels to trace the efficient frontier, then three specific portfolios are extracted:
+
+**Minimum Variance** — minimises portfolio variance, ignoring return. Dominated by LQD (lowest individual vol at 8.6%), GLD and TLT (low correlation with equities). Equities (SPY, QQQ, XOM) receive minimal allocation. Result: significantly lower vol and tail risk than equal-weight, at the cost of return.
+
+**Maximum Sharpe** — the tangency portfolio, maximising return per unit of risk. Concentrates in QQQ (Sharpe 0.774) and SPY (Sharpe 0.695). TLT receives near-zero weight due to its negative Sharpe over the period. Result: highest return and Sharpe, but carries more equity concentration.
+
+**Equal Weight (benchmark)** — sits inside the frontier, confirming it is mean-variance inefficient. Both optimised portfolios dominate it on a risk-adjusted basis.
+
+**Portfolio comparison across all three:**
+
+| Portfolio | Ann. Return | Ann. Vol | Sharpe | 99% VaR ($) | 99% CVaR ($) |
+|---|---|---|---|---|---|
+| Equal Weight | 6.66% | 11.71% | 0.568 | $18,886 | $31,791 |
+| Min Variance | lower | lower | comparable | lower | lower |
+| Max Sharpe | higher | higher | higher | higher | higher |
+
+The key finding: **portfolio construction choices directly affect tail risk**, not just normal-times volatility. Minimum variance reduces 99% VaR and CVaR materially — meaningful in a risk management context. Maximum Sharpe improves the return-risk tradeoff but accepts higher tail exposure as a consequence of equity concentration.
+
+---
+
+## Interactive App
+
+The research has also been packaged into an interactive Streamlit app that lets you run the full analysis on any set of tickers, date range, and portfolio weights in real time — VaR/CVaR across all three methods, rolling backtests with Kupiec and Christoffersen results, GARCH-t conditional volatility forecasting, and mean-variance portfolio optimization with the efficient frontier.
+
+**Live:** [multi-asset-portfolio-risk-engine.streamlit.app](https://multi-asset-portfolio-risk-engine-var-cvar-backtesting-stress.streamlit.app/)
+
+---
+
 ## Setup
 
 ```bash
@@ -180,25 +213,26 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Running
+## Running the Notebooks
 
 Run notebooks in order — each phase saves to `portfolio_data.pkl` which the next phase loads:
 
 ```
-phase_1.ipynb
-phase_2.ipynb
-phase_3_VaR_ES.ipynb
-phase_4_backtest_kupiek.ipynb
-phase_5_stress_testing.ipynb
-phase_6_risk_dashboard.ipynb
-phase_7_GARCH.ipynb
+notebooks/phase_1.ipynb
+notebooks/phase_2.ipynb
+notebooks/phase_3_VaR_ES.ipynb
+notebooks/phase_4_backtest_kupiek.ipynb
+notebooks/phase_5_stress_testing.ipynb
+notebooks/phase_6_risk_dashboard.ipynb
+notebooks/phase_7_GARCH.ipynb
+notebooks/phase_8_efficient_frontier.ipynb
 ```
 
 ---
 
 ## Remaining Limitations
 
-- **Static covariance matrix** — DCC-GARCH or regime-switching needed for correlation dynamics
-- **Equal weighting only** — mean-variance optimization and efficient frontier not yet implemented
-- **1-day horizon only** — multi-day VaR requires simulated paths, not √T scaling
-- **Monte Carlo normality** — MC still uses normal shocks; Student-t draws would make it a genuinely independent method
+- **Static covariance matrix** — correlation is assumed constant; DCC-GARCH or regime-switching would capture correlation dynamics across market states
+- **1-day horizon only** — multi-day VaR requires simulated return paths, not simple √T scaling
+- **Monte Carlo normality** — MC still draws normal shocks; Student-t draws would make it a genuinely independent method from parametric
+- **Mean-variance assumptions** — the optimizer uses historical means and covariances as proxies for forward-looking expectations, which is a known limitation of Markowitz-style optimization
