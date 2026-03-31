@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated data files (re-run notebooks to reproduce)
+portfolio_data.pkl
+raw_data.csv
+
+# OS
+.DS_Store
+Thumbs.db
