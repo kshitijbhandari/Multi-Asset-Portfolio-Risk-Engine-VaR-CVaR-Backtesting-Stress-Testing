@@ -7,3 +7,4 @@ scipy
 arch
 streamlit
 statsmodels
+altair<5
