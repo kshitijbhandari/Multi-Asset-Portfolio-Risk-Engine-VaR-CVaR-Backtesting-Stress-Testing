@@ -13,8 +13,40 @@ from scipy.stats import t as student_t
 from scipy.optimize import minimize
 from arch import arch_model
 
-sns.set_theme(style="darkgrid")
-plt.rcParams.update({"font.size": 8})
+DARK_BG   = "#0e1117"
+DARK_AX   = "#161b2a"
+GRID_COL  = "#2a3347"
+TEXT_COL  = "#e2e8f0"
+BLUE      = "#3b82f6"
+BLUE_LIGHT= "#60a5fa"
+ACCENT    = "#1d4ed8"
+
+sns.set_theme(style="dark", rc={
+    "axes.facecolor":    DARK_AX,
+    "figure.facecolor":  DARK_BG,
+    "axes.edgecolor":    GRID_COL,
+    "axes.labelcolor":   TEXT_COL,
+    "xtick.color":       TEXT_COL,
+    "ytick.color":       TEXT_COL,
+    "text.color":        TEXT_COL,
+    "grid.color":        GRID_COL,
+    "grid.linewidth":    0.6,
+})
+plt.rcParams.update({
+    "font.size":          8,
+    "figure.facecolor":   DARK_BG,
+    "axes.facecolor":     DARK_AX,
+    "axes.edgecolor":     GRID_COL,
+    "axes.labelcolor":    TEXT_COL,
+    "xtick.color":        TEXT_COL,
+    "ytick.color":        TEXT_COL,
+    "text.color":         TEXT_COL,
+    "grid.color":         GRID_COL,
+    "grid.linewidth":     0.6,
+    "legend.facecolor":   DARK_AX,
+    "legend.edgecolor":   GRID_COL,
+    "legend.labelcolor":  TEXT_COL,
+})
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -22,8 +54,49 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown("""
+<style>
+/* ── Tab bar ── */
+.stTabs [data-baseweb="tab-list"] {
+    background-color: #161b2a;
+    border-radius: 8px;
+    padding: 4px 6px;
+    gap: 4px;
+}
+.stTabs [data-baseweb="tab"] {
+    background-color: transparent;
+    color: #94a3b8;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 6px 18px;
+}
+.stTabs [aria-selected="true"] {
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
+}
+/* ── Sidebar ── */
+section[data-testid="stSidebar"] {
+    background-color: #111827;
+    border-right: 1px solid #1e2d45;
+}
+/* ── Metric cards ── */
+[data-testid="metric-container"] {
+    background-color: #161b2a;
+    border: 1px solid #1e2d45;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+/* ── Dataframe ── */
+[data-testid="stDataFrame"] { border-radius: 8px; }
+/* ── Main background ── */
+.stApp { background-color: #0e1117; }
+/* ── st.info box ── */
+.stAlert { background-color: #1a2744; border-left: 4px solid #3b82f6; }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("Portfolio Risk Engine")
-st.markdown("VaR, CVaR, Backtesting, Stress Testing, GARCH-t, and Portfolio Optimization")
+st.markdown("VaR · CVaR · Backtesting · GARCH-t · Portfolio Optimization")
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 st.sidebar.header("Portfolio Settings")
@@ -190,9 +263,14 @@ with tab_overview:
 
     # Normalised prices
     norm_prices = prices / prices.iloc[0] * 100
+    PRICE_COLORS = [
+        "#3b82f6","#60a5fa","#93c5fd","#1d4ed8","#2563eb",
+        "#7dd3fc","#38bdf8","#0ea5e9","#0284c7","#0369a1",
+    ]
     fig, ax = plt.subplots(figsize=(12, 4))
-    for t in tickers:
-        ax.plot(norm_prices.index, norm_prices[t], label=t, linewidth=1.2)
+    for i, t in enumerate(tickers):
+        ax.plot(norm_prices.index, norm_prices[t], label=t,
+                linewidth=1.2, color=PRICE_COLORS[i % len(PRICE_COLORS)])
     ax.set_title("Normalised Prices — Base 100")
     ax.set_ylabel("Index Level")
     ax.legend(ncol=4, fontsize=8)
@@ -218,8 +296,9 @@ with tab_overview:
     st.markdown("**Correlation Matrix**")
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.heatmap(log_returns.corr(), annot=True, fmt=".2f",
-                cmap="RdYlGn", center=0, vmin=-1, vmax=1,
-                linewidths=0.5, annot_kws={"size": 8}, ax=ax)
+                cmap="coolwarm", center=0, vmin=-1, vmax=1,
+                linewidths=0.5, annot_kws={"size": 8}, ax=ax,
+                linecolor=DARK_BG)
     ax.set_title("Asset Correlation (Daily Log Returns)")
     plt.tight_layout()
     st.pyplot(fig)
@@ -248,14 +327,12 @@ with tab_var:
     # Distribution plot
     fig, ax = plt.subplots(figsize=(12, 4))
     ax.hist(returns * 100, bins=80, density=True,
-            color="steelblue", alpha=0.5, label="Empirical")
+            color=BLUE, alpha=0.45, label="Empirical")
 
-    colors = {"HS VaR": "orange", "HS CVaR": "red",
-              "Param VaR": "green", "MC VaR": "purple"}
-    ax.axvline(-hs_v  * 100, color="orange", lw=2, ls="--", label=f"HS VaR {int(c*100)}% = {hs_v*100:.2f}%")
-    ax.axvline(-hs_cv * 100, color="red",    lw=2, ls="-",  label=f"HS CVaR = {hs_cv*100:.2f}%")
-    ax.axvline(-pm_v  * 100, color="green",  lw=1.5, ls="--", label=f"Param VaR = {pm_v*100:.2f}%")
-    ax.axvline(-mc_v  * 100, color="purple", lw=1.5, ls="--", label=f"MC VaR = {mc_v*100:.2f}%")
+    ax.axvline(-hs_v  * 100, color="#f59e0b", lw=2,   ls="--", label=f"HS VaR {int(c*100)}% = {hs_v*100:.2f}%")
+    ax.axvline(-hs_cv * 100, color="#ef4444", lw=2,   ls="-",  label=f"HS CVaR = {hs_cv*100:.2f}%")
+    ax.axvline(-pm_v  * 100, color="#22c55e", lw=1.5, ls="--", label=f"Param VaR = {pm_v*100:.2f}%")
+    ax.axvline(-mc_v  * 100, color="#a855f7", lw=1.5, ls="--", label=f"MC VaR = {mc_v*100:.2f}%")
 
     ax.set_xlabel("Daily Return (%)")
     ax.set_ylabel("Density")
@@ -268,12 +345,12 @@ with tab_var:
     # CVaR tail visualisation
     fig, ax = plt.subplots(figsize=(12, 3))
     tail = returns[returns < -hs_v]
-    ax.hist(returns * 100, bins=80, density=True, color="steelblue", alpha=0.4, label="Full distribution")
+    ax.hist(returns * 100, bins=80, density=True, color=BLUE, alpha=0.35, label="Full distribution")
     ax.hist(tail * 100, bins=20, density=False,
             weights=np.ones(len(tail)) / len(returns),
-            color="tomato", alpha=0.8, label="Tail losses (beyond VaR)")
-    ax.axvline(-hs_v  * 100, color="orange", lw=2, ls="--", label=f"VaR = {hs_v*100:.2f}%")
-    ax.axvline(tail.mean() * 100, color="red", lw=2, label=f"CVaR = {-tail.mean()*100:.2f}%")
+            color="#ef4444", alpha=0.85, label="Tail losses (beyond VaR)")
+    ax.axvline(-hs_v  * 100, color="#f59e0b", lw=2, ls="--", label=f"VaR = {hs_v*100:.2f}%")
+    ax.axvline(tail.mean() * 100, color="#ef4444", lw=2, label=f"CVaR = {-tail.mean()*100:.2f}%")
     ax.set_xlabel("Daily Return (%)")
     ax.set_title("CVaR = Mean of the Tail Beyond VaR")
     ax.legend(fontsize=8)
@@ -335,16 +412,16 @@ with tab_bt:
 
     fig, axes = plt.subplots(2, 1, figsize=(13, 8), sharex=True)
     for ax, (name, roll, exc, color) in zip(axes, [
-        ("Historical Simulation", roll_hs,    exc_hs,    "steelblue"),
-        ("Parametric",            roll_param, exc_param, "tomato"),
+        ("Historical Simulation", roll_hs,    exc_hs,    BLUE_LIGHT),
+        ("Parametric",            roll_param, exc_param, "#22c55e"),
     ]):
         exc_ = exc[lookback:]
-        ax.plot(valid_dates, actual_valid, color="grey", lw=0.5, alpha=0.7, label="Actual")
+        ax.plot(valid_dates, actual_valid, color="#64748b", lw=0.5, alpha=0.7, label="Actual")
         ax.plot(valid_dates, -roll[lookback:] * 100, color=color, lw=1.2,
                 label=f"{int(c*100)}% VaR")
         ax.scatter(valid_dates[exc_ == 1], actual_valid[exc_ == 1],
-                   color="red", s=10, zorder=5, label=f"Exceptions ({exc_.sum()})")
-        ax.axhline(0, color="black", lw=0.5)
+                   color="#ef4444", s=10, zorder=5, label=f"Exceptions ({exc_.sum()})")
+        ax.axhline(0, color=GRID_COL, lw=0.5)
         ax.set_ylabel("Return (%)")
         ax.set_title(f"{name} — Rolling {int(c*100)}% VaR")
         ax.legend(fontsize=7, loc="lower right")
@@ -403,14 +480,14 @@ with tab_garch:
     # Conditional vol chart
     fig, axes = plt.subplots(2, 1, figsize=(13, 6), sharex=True)
     axes[0].fill_between(dates, returns * 100, 0,
-                         where=(returns >= 0), color="steelblue", alpha=0.6, label="Gain")
+                         where=(returns >= 0), color=BLUE,      alpha=0.65, label="Gain")
     axes[0].fill_between(dates, returns * 100, 0,
-                         where=(returns < 0),  color="tomato",    alpha=0.6, label="Loss")
+                         where=(returns < 0),  color="#ef4444", alpha=0.65, label="Loss")
     axes[0].set_ylabel("Return (%)")
     axes[0].set_title("Portfolio Daily Returns")
     axes[0].legend(fontsize=7)
 
-    axes[1].plot(dates, cond_vol, color="darkorange", lw=1.0,
+    axes[1].plot(dates, cond_vol, color="#f59e0b", lw=1.0,
                  label="GARCH-t Conditional Vol (%)")
     axes[1].set_ylabel("Conditional Vol (%)")
     axes[1].set_title("GARCH(1,1)-t Conditional Volatility — Spikes During Crises")
@@ -508,21 +585,21 @@ with tab_opt:
     ms_r, ms_v, _ = portfolio_opt_metrics(w_ms, mu_ann, cov_ann)
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(fr_vols * 100, fr_rets * 100, color="steelblue", lw=2.5, label="Efficient Frontier")
+    ax.plot(fr_vols * 100, fr_rets * 100, color=BLUE, lw=2.5, label="Efficient Frontier")
 
     for i, t in enumerate(tickers):
         v = np.sqrt(cov_ann.values[i, i])
         r = mu_ann.iloc[i]
-        ax.scatter(v * 100, r * 100, s=50, color="dimgray", zorder=4)
+        ax.scatter(v * 100, r * 100, s=50, color="#94a3b8", zorder=4)
         ax.annotate(t, (v*100, r*100), textcoords="offset points",
-                    xytext=(5, 3), fontsize=8, color="dimgray")
+                    xytext=(5, 3), fontsize=8, color="#94a3b8")
 
-    ax.scatter(ew_v*100, ew_r*100, s=120, color="steelblue", marker="o",
-               edgecolors="black", lw=0.8, zorder=5, label="Equal Weight")
-    ax.scatter(mv_v*100, mv_r*100, s=120, color="green", marker="D",
-               edgecolors="black", lw=0.8, zorder=5, label="Min Variance")
-    ax.scatter(ms_v*100, ms_r*100, s=180, color="tomato", marker="*",
-               edgecolors="black", lw=0.8, zorder=5, label="Max Sharpe")
+    ax.scatter(ew_v*100, ew_r*100, s=120, color=BLUE_LIGHT, marker="o",
+               edgecolors=TEXT_COL, lw=0.8, zorder=5, label="Equal Weight")
+    ax.scatter(mv_v*100, mv_r*100, s=120, color="#22c55e", marker="D",
+               edgecolors=TEXT_COL, lw=0.8, zorder=5, label="Min Variance")
+    ax.scatter(ms_v*100, ms_r*100, s=180, color="#f59e0b", marker="*",
+               edgecolors=TEXT_COL, lw=0.8, zorder=5, label="Max Sharpe")
 
     ax.set_xlabel("Annualised Volatility (%)")
     ax.set_ylabel("Annualised Return (%)")
@@ -536,18 +613,17 @@ with tab_opt:
     # Weight comparison
     fig, axes = plt.subplots(1, 3, figsize=(14, 4))
     for ax, (title, w, color) in zip(axes, [
-        ("Equal Weight", weights_arr, "steelblue"),
-        ("Min Variance", w_mv,        "green"),
-        ("Max Sharpe",   w_ms,        "tomato"),
+        ("Equal Weight", weights_arr, BLUE_LIGHT),
+        ("Min Variance", w_mv,        "#22c55e"),
+        ("Max Sharpe",   w_ms,        "#f59e0b"),
     ]):
-        bars = ax.bar(tickers, w * 100, color=color, alpha=0.8,
-                      edgecolor="black", linewidth=0.5)
+        bars = ax.bar(tickers, w * 100, color=color, alpha=0.85,
+                      edgecolor=GRID_COL, linewidth=0.5)
         ax.bar_label(bars, fmt="%.1f%%", padding=2, fontsize=7)
         ax.set_title(title, fontweight="bold")
         ax.set_ylabel("Weight (%)")
         ax.set_ylim(0, max(w * 100) * 1.3)
-        ax.axhline(100/N, color="grey", lw=1, ls="--", alpha=0.6)
-        ax.set_facecolor("#ffffff")
+        ax.axhline(100/N, color="#64748b", lw=1, ls="--", alpha=0.6)
     plt.suptitle("Portfolio Weight Allocations", fontweight="bold")
     plt.tight_layout()
     st.pyplot(fig)
