@@ -178,8 +178,8 @@ def portfolio_opt_metrics(w, mu, cov):
     return ret, vol, ret / vol if vol > 0 else 0
 
 # ── Tabs ───────────────────────────────────────────────────────────────────────
-tab_overview, tab_var, tab_bt, tab_stress, tab_garch, tab_opt = st.tabs([
-    "Overview", "VaR & CVaR", "Backtest", "Stress Test", "GARCH-t", "Optimizer"
+tab_overview, tab_var, tab_bt, tab_garch, tab_opt = st.tabs([
+    "Overview", "VaR & CVaR", "Backtest", "GARCH-t", "Optimizer"
 ])
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -353,86 +353,7 @@ with tab_bt:
     plt.close()
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 4: STRESS TEST
-# ══════════════════════════════════════════════════════════════════════════════
-with tab_stress:
-    st.subheader("Stress Testing")
-
-    hs_v99, hs_cv99 = hs_var_cvar(returns, 0.99)
-    hs_v95, _       = hs_var_cvar(returns, 0.95)
-
-    def scenario_metrics(window_returns):
-        port = window_returns.dot(weights_arr)
-        cum  = port.cumsum()
-        return {
-            "Worst Day (%)":   -port.min() * 100,
-            "Total Loss (%)":  -cum.iloc[-1] * 100,
-            "Worst Day ($)":   -port.min() * portfolio_value,
-            "Total Loss ($)":  -cum.iloc[-1] * portfolio_value,
-            "vs 99% VaR":      -port.min() / hs_v99,
-        }
-
-    scenarios = {}
-
-    # COVID
-    covid_mask = (log_returns.index >= "2020-02-20") & (log_returns.index <= "2020-03-23")
-    if covid_mask.sum() > 2:
-        scenarios["COVID 2020"] = scenario_metrics(log_returns[covid_mask])
-
-    # Rate Shock 2022
-    rate_mask = (log_returns.index >= "2022-01-03") & (log_returns.index <= "2022-10-13")
-    if rate_mask.sum() > 2:
-        scenarios["Rate Shock 2022"] = scenario_metrics(log_returns[rate_mask])
-
-    # Hypothetical
-    hypo_shocks = np.array([-0.15, -0.15, -0.15, 0.05, -0.05, -0.08, -0.15, -0.15][:N])
-    if len(hypo_shocks) == N:
-        hypo_loss = float(-np.dot(weights_arr, hypo_shocks))
-        scenarios["Hypothetical Shock"] = {
-            "Worst Day (%)":  hypo_loss * 100,
-            "Total Loss (%)": hypo_loss * 100,
-            "Worst Day ($)":  hypo_loss * portfolio_value,
-            "Total Loss ($)": hypo_loss * portfolio_value,
-            "vs 99% VaR":     hypo_loss / hs_v99,
-        }
-
-    if scenarios:
-        df_stress = pd.DataFrame(scenarios).T
-        df_display = df_stress.copy()
-        df_display["Worst Day (%)"]  = df_display["Worst Day (%)"].map(lambda x: f"{x:.2f}%")
-        df_display["Total Loss (%)"] = df_display["Total Loss (%)"].map(lambda x: f"{x:.2f}%")
-        df_display["Worst Day ($)"]  = df_display["Worst Day ($)"].map(lambda x: f"${x:,.0f}")
-        df_display["Total Loss ($)"] = df_display["Total Loss ($)"].map(lambda x: f"${x:,.0f}")
-        df_display["vs 99% VaR"]     = df_display["vs 99% VaR"].map(lambda x: f"{x:.2f}x")
-        st.dataframe(df_display, use_container_width=True)
-
-        # Bar chart
-        labels = list(scenarios.keys())
-        losses = [scenarios[s]["Worst Day ($)"] for s in labels]
-        colors = ["tomato", "darkorange", "mediumpurple", "dimgray"][:len(labels)]
-
-        fig, ax = plt.subplots(figsize=(10, 4))
-        bars = ax.bar(labels, losses, color=colors, alpha=0.85, width=0.5)
-        ax.bar_label(bars, labels=[f"${v/1e3:.0f}K" for v in losses], padding=4, fontsize=9)
-        ax.axhline(hs_v99  * portfolio_value, color="blue",  lw=1.5, ls="--",
-                   label=f"99% VaR  = ${hs_v99*portfolio_value:,.0f}")
-        ax.axhline(hs_v95  * portfolio_value, color="green", lw=1.5, ls="--",
-                   label=f"95% VaR  = ${hs_v95*portfolio_value:,.0f}")
-        ax.axhline(hs_cv99 * portfolio_value, color="red",   lw=1.5, ls="-",
-                   label=f"99% CVaR = ${hs_cv99*portfolio_value:,.0f}")
-        ax.yaxis.set_major_formatter(mtick.FuncFormatter(lambda x, _: f"${x/1e3:.0f}K"))
-        ax.set_ylabel("Portfolio Loss ($)")
-        ax.set_title("Stress Test Losses vs VaR/CVaR Reference Lines")
-        ax.legend(fontsize=8)
-        ax.set_ylim(0, max(losses) * 1.3)
-        plt.tight_layout()
-        st.pyplot(fig)
-        plt.close()
-    else:
-        st.info("No stress test windows fall within the selected date range.")
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TAB 5: GARCH-t
+# TAB 4: GARCH-t
 # ══════════════════════════════════════════════════════════════════════════════
 with tab_garch:
     st.subheader("GARCH(1,1) with Student-t Innovations")
