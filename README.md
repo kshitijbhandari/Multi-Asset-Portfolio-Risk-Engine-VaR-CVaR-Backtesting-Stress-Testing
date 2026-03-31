@@ -228,11 +228,3 @@ notebooks/phase_7_GARCH.ipynb
 notebooks/phase_8_efficient_frontier.ipynb
 ```
 
----
-
-## Remaining Limitations
-
-- **Static covariance matrix** — correlation is assumed constant; DCC-GARCH or regime-switching would capture correlation dynamics across market states
-- **1-day horizon only** — multi-day VaR requires simulated return paths, not simple √T scaling
-- **Monte Carlo normality** — MC still draws normal shocks; Student-t draws would make it a genuinely independent method from parametric
-- **Mean-variance assumptions** — the optimizer uses historical means and covariances as proxies for forward-looking expectations, which is a known limitation of Markowitz-style optimization
