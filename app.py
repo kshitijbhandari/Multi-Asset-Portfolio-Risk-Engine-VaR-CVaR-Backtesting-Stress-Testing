@@ -93,6 +93,15 @@ except Exception as e:
     st.error(f"Data download failed: {e}")
     st.stop()
 
+if prices.empty or log_returns.empty:
+    st.error("No data returned for the selected tickers and date range. Check tickers are valid and dates are not in the future.")
+    st.stop()
+
+missing = [t for t in tickers if t not in prices.columns]
+if missing:
+    st.error(f"Could not find data for: {', '.join(missing)}. Remove them and try again.")
+    st.stop()
+
 portfolio_returns = log_returns.dot(weights_arr)
 returns  = portfolio_returns.values
 dates    = portfolio_returns.index
