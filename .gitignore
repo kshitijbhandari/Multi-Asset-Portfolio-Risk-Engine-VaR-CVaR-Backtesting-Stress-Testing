@@ -15,6 +15,12 @@ env/
 portfolio_data.pkl
 raw_data.csv
 
+# Generated images (re-run notebooks to reproduce)
+*.png
+
+# PDF files
+*.pdf
+
 # OS
 .DS_Store
 Thumbs.db
