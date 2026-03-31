@@ -442,12 +442,16 @@ with tab_garch:
         rets_pct = np.array(returns_tuple) * 100
         am  = arch_model(rets_pct, vol="Garch", p=1, q=1, mean="Zero", dist="t")
         res = am.fit(disp="off")
+        cond_vol = res.conditional_volatility
+        if hasattr(cond_vol, "values"):
+            cond_vol = cond_vol.values
+        cond_vol = np.array(cond_vol, dtype=float)
         return (
             float(res.params["omega"]),
             float(res.params["alpha[1]"]),
             float(res.params["beta[1]"]),
             float(res.params["nu"]),
-            res.conditional_volatility.values,
+            cond_vol,
         )
 
     omega, alpha, beta, nu, cond_vol = fit_garch_t(tuple(returns))
