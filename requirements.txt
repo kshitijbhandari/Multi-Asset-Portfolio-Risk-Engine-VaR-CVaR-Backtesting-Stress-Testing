@@ -1,10 +1,11 @@
 yfinance
 numpy
-pandas
+pandas==2.2.2
 matplotlib
 seaborn
 scipy
 arch
-streamlit
+streamlit==1.35.0
 statsmodels
-altair<5
+altair==4.2.2
+pyarrow==14.0.2
