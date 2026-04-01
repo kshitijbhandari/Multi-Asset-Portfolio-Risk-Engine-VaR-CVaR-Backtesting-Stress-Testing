@@ -1,6 +1,6 @@
 # Multi-Asset Portfolio Risk Engine
 
-**Live app:** [multi-asset-portfolio-risk-engine.streamlit.app](https://multi-asset-portfolio-risk-engine-var-cvar-backtesting-stress.streamlit.app/)
+**Live app:** [multi-asset-portfolio-risk-engine.streamlit.app](https://kshitijbhandari.github.io/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/)
 
 A full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Covers data ingestion, three VaR methods, CVaR (Expected Shortfall), statistical backtesting, stress testing across historical crises, GARCH(1,1)-t dynamic volatility modelling, and mean-variance portfolio optimization — all assembled into a single risk research project across 8 notebook phases.
 
