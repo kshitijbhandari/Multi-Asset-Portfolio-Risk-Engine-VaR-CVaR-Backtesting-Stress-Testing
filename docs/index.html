@@ -146,12 +146,12 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      gap: 20px;
     }
 
     .grid.wide {
-      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
     }
 
     .card {
@@ -171,6 +171,8 @@
       width: 100%;
       display: block;
       background: #0d1117;
+      min-height: 260px;
+      object-fit: cover;
     }
 
     .card-body { padding: 12px 14px 14px; }
@@ -287,7 +289,7 @@
 
     @media (max-width: 600px) {
       .lightbox-nav { display: none; }
-      .grid { grid-template-columns: 1fr; }
+      .grid, .grid.wide { grid-template-columns: 1fr; }
       .stats-bar { gap: 8px; }
       .stat { min-width: 100px; padding: 10px 14px; }
       .filter-bar { gap: 6px; }
@@ -300,7 +302,7 @@
 <header>
   <h1>Multi-Asset Portfolio Risk Engine</h1>
   <p class="subtitle">
-    Full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Three VaR methods, CVaR, statistical backtesting, stress testing across historical crises, GARCH(1,1)-t dynamic volatility modelling, and mean-variance portfolio optimization — across 8 notebook phases.
+    Full institutional-style market risk pipeline for an 8-asset, $1M portfolio. Three VaR methods, CVaR, statistical backtesting, stress testing across historical crises, GARCH(1,1)-t dynamic volatility modelling, and mean-variance portfolio optimization: across 8 notebook phases.
   </p>
 
   <div class="stats-bar">
@@ -351,7 +353,7 @@
   <!-- PHASE 1: PORTFOLIO OVERVIEW -->
   <div class="section" data-section="overview">
     <div class="section-header">
-      <div class="section-title">Phase 1 — Portfolio Construction &amp; Overview</div>
+      <div class="section-title">Phase 1: Portfolio Construction &amp; Overview</div>
       <div class="section-desc">
         Baseline statistics for an 8-asset equal-weighted portfolio (SPY, QQQ, EFA, GLD, TLT, LQD, XOM, VNQ) over 2,514 trading days from 2015 to 2024. Diversification confirmed: portfolio volatility (11.7%) is below every individual asset. Excess kurtosis of 16.99 invalidates the normality assumption and motivates Historical Simulation and CVaR over parametric methods.
       </div>
@@ -369,41 +371,41 @@
         </div>
       </div>
       <div class="card" data-category="overview"
-           data-title="Daily Returns — Volatility Clustering"
-           data-desc="Volatility clustering is immediately visible — calm stretches punctuated by violent bursts in 2020 and 2022. This motivates GARCH modelling in Phase 7: static rolling windows weight every day equally, missing regime shifts entirely."
+           data-title="Daily Returns: Volatility Clustering"
+           data-desc="Volatility clustering is immediately visible: calm stretches punctuated by violent bursts in 2020 and 2022. This motivates GARCH modelling in Phase 7: static rolling windows weight every day equally, missing regime shifts entirely."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_1_overview/02_daily_returns.png" alt="Daily Returns" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">Daily Returns — Volatility Clustering</div>
+          <div class="card-title">Daily Returns: Volatility Clustering</div>
           <div class="card-desc">Calm stretches punctuated by violent bursts in 2020 and 2022. The pattern that motivates GARCH: bad days predict bad days.</div>
           <span class="tag">Phase 1</span>
         </div>
       </div>
       <div class="card" data-category="overview"
            data-title="Return Distribution vs Normal"
-           data-desc="The portfolio return distribution has excess kurtosis of 16.99 — the normal curve significantly underestimates tail probability. The fat left tail is clearly visible against the fitted Gaussian, directly invalidating the parametric VaR assumption used in Phase 2."
+           data-desc="The portfolio return distribution has excess kurtosis of 16.99: the normal curve significantly underestimates tail probability. The fat left tail is clearly visible against the fitted Gaussian, directly invalidating the parametric VaR assumption used in Phase 2."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_1_overview/03_return_distribution_vs_normal.png" alt="Return Distribution" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Return Distribution vs Normal</div>
-          <div class="card-desc">Excess kurtosis = 16.99. The fat left tail is clearly visible against the Gaussian fit — the normality assumption is violated from the start.</div>
+          <div class="card-desc">Excess kurtosis = 16.99. The fat left tail is clearly visible against the Gaussian fit: the normality assumption is violated from the start.</div>
           <span class="tag">Phase 1</span>
         </div>
       </div>
       <div class="card" data-category="overview"
            data-title="Asset Correlation Heatmap"
-           data-desc="TLT and GLD show low-to-negative correlation with equities — the diversification benefit that justifies including them. The 2022 rate shock breaks this: both equities and bonds fell simultaneously, invalidating the covariance matrix embedded in the portfolio."
+           data-desc="TLT and GLD show low-to-negative correlation with equities: the diversification benefit that justifies including them. The 2022 rate shock breaks this: both equities and bonds fell simultaneously, invalidating the covariance matrix embedded in the portfolio."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_1_overview/04_correlation_heatmap.png" alt="Correlation Heatmap" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Asset Correlation Heatmap</div>
-          <div class="card-desc">TLT and GLD show low-to-negative correlation with equities. The 2022 rate shock broke this — both safety assets fell alongside equities.</div>
+          <div class="card-desc">TLT and GLD show low-to-negative correlation with equities. The 2022 rate shock broke this: both safety assets fell alongside equities.</div>
           <span class="tag">Phase 1</span>
         </div>
       </div>
       <div class="card" data-category="overview"
            data-title="Asset Volatility Comparison"
-           data-desc="LQD has the lowest individual volatility (8.6%) while XOM is the most volatile (27.8%). The equal-weighted portfolio (11.7%) sits below every individual constituent — diversification reducing risk as expected."
+           data-desc="LQD has the lowest individual volatility (8.6%) while XOM is the most volatile (27.8%). The equal-weighted portfolio (11.7%) sits below every individual constituent: diversification reducing risk as expected."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_1_overview/05_asset_volatility.png" alt="Asset Volatility" loading="lazy"/>
         <div class="card-body">
@@ -418,85 +420,85 @@
   <!-- PHASE 2 + 3: VaR & CVaR -->
   <div class="section" data-section="var">
     <div class="section-header">
-      <div class="section-title">Phase 2 &amp; 3 — VaR &amp; CVaR / Expected Shortfall</div>
+      <div class="section-title">Phase 2 &amp; 3: VaR &amp; CVaR / Expected Shortfall</div>
       <div class="section-desc">
-        Three VaR methods (Historical Simulation, Parametric, Monte Carlo) plus CVaR across 95% and 99% confidence levels. At 99%, Parametric VaR is lower than Historical Simulation — the normal distribution is too optimistic in the tail. CVaR/VaR ratio at 99% Historical = 1.68x vs the theoretical normal ratio of 1.16x: the empirical tail is 45% fatter than normality assumes. Basel III replaced VaR with CVaR for this exact reason.
+        Three VaR methods (Historical Simulation, Parametric, Monte Carlo) plus CVaR across 95% and 99% confidence levels. At 99%, Parametric VaR is lower than Historical Simulation: the normal distribution is too optimistic in the tail. CVaR/VaR ratio at 99% Historical = 1.68x vs the theoretical normal ratio of 1.16x: the empirical tail is 45% fatter than normality assumes. Basel III replaced VaR with CVaR for this exact reason.
       </div>
     </div>
     <div class="grid">
       <div class="card" data-category="var"
-           data-title="Historical Simulation — Return Distribution"
-           data-desc="The empirical left tail is thicker than the normal fit suggests. Historical Simulation reads the actual worst 1% of days with no distributional assumption — which is why it catches more tail risk than the parametric method at 99%."
+           data-title="Historical Simulation: Return Distribution"
+           data-desc="The empirical left tail is thicker than the normal fit suggests. Historical Simulation reads the actual worst 1% of days with no distributional assumption: which is why it catches more tail risk than the parametric method at 99%."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_2_var/01_hs_var_distribution.png" alt="HS VaR Distribution" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">Historical Simulation — Return Distribution</div>
-          <div class="card-desc">Empirical left tail is thicker than normal. No distributional assumption — reads actual worst 1% of days. 99% VaR: $18,887.</div>
+          <div class="card-title">Historical Simulation: Return Distribution</div>
+          <div class="card-desc">Empirical left tail is thicker than normal. No distributional assumption: reads actual worst 1% of days. 99% VaR: $18,887.</div>
           <span class="tag">Phase 2</span>
         </div>
       </div>
       <div class="card" data-category="var"
-           data-title="Parametric VaR — Normal Distribution Fit"
-           data-desc="The normal curve underestimates the frequency and severity of large losses. Fat left tail is clearly visible against the fitted Gaussian. This is why Parametric 99% VaR ($17,159) is lower than Historical Simulation ($18,887) — the model is too optimistic."
+           data-title="Parametric VaR: Normal Distribution Fit"
+           data-desc="The normal curve underestimates the frequency and severity of large losses. Fat left tail is clearly visible against the fitted Gaussian. This is why Parametric 99% VaR ($17,159) is lower than Historical Simulation ($18,887): the model is too optimistic."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_2_var/02_parametric_var_normal.png" alt="Parametric VaR" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">Parametric VaR — Normal Distribution Fit</div>
-          <div class="card-desc">Normal curve underestimates tail severity. 99% VaR: $17,159 — $1,728 less than Historical Simulation. That gap is model risk.</div>
+          <div class="card-title">Parametric VaR: Normal Distribution Fit</div>
+          <div class="card-desc">Normal curve underestimates tail severity. 99% VaR: $17,159: $1,728 less than Historical Simulation. That gap is model risk.</div>
           <span class="tag">Phase 2</span>
         </div>
       </div>
       <div class="card" data-category="var"
-           data-title="Monte Carlo Simulation — 100,000 Paths"
-           data-desc="100,000 simulated daily returns drawn from calibrated parameters. Converges toward the parametric result because it still assumes normality by default — demonstrating that simulation complexity doesn't fix a wrong distributional assumption."
+           data-title="Monte Carlo Simulation: 100,000 Paths"
+           data-desc="100,000 simulated daily returns drawn from calibrated parameters. Converges toward the parametric result because it still assumes normality by default: demonstrating that simulation complexity doesn't fix a wrong distributional assumption."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_2_var/03_montecarlo_var_distribution.png" alt="Monte Carlo VaR" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">Monte Carlo — 100,000 Simulated Paths</div>
-          <div class="card-desc">Converges to parametric result — simulation alone doesn't fix a wrong distributional assumption. 99% VaR: $17,007.</div>
+          <div class="card-title">Monte Carlo: 100,000 Simulated Paths</div>
+          <div class="card-desc">Converges to parametric result: simulation alone doesn't fix a wrong distributional assumption. 99% VaR: $17,007.</div>
           <span class="tag">Phase 2</span>
         </div>
       </div>
       <div class="card" data-category="var"
-           data-title="VaR Method Comparison — 95% and 99%"
-           data-desc="Side-by-side comparison of all three VaR methods at both confidence levels. At 95%, parametric is most conservative. At 99%, Historical Simulation is highest — the inversion is the model risk gap and explains why banks using parametric models underestimated tail risk before 2008."
+           data-title="VaR Method Comparison: 95% and 99%"
+           data-desc="Side-by-side comparison of all three VaR methods at both confidence levels. At 95%, parametric is most conservative. At 99%, Historical Simulation is highest: the inversion is the model risk gap and explains why banks using parametric models underestimated tail risk before 2008."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_2_var/04_var_method_comparison.png" alt="VaR Comparison" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">VaR Method Comparison</div>
-          <div class="card-desc">At 99%, HS exceeds Parametric — the ranking inverts from 95%. The inversion is the model risk gap that pre-2008 banks ignored.</div>
+          <div class="card-desc">At 99%, HS exceeds Parametric: the ranking inverts from 95%. The inversion is the model risk gap that pre-2008 banks ignored.</div>
           <span class="tag">Phase 2</span>
         </div>
       </div>
       <div class="card" data-category="var"
            data-title="CVaR Tail Visualisation"
-           data-desc="VaR marks the threshold; CVaR is the average of everything beyond it. The gap between them measures how fat the tail is in that region. Historical CVaR at 99% = $31,791 vs VaR of $18,887 — a 1.68x ratio. The theoretical normal ratio is 1.16x. The empirical tail is 45% fatter."
+           data-desc="VaR marks the threshold; CVaR is the average of everything beyond it. The gap between them measures how fat the tail is in that region. Historical CVaR at 99% = $31,791 vs VaR of $18,887: a 1.68x ratio. The theoretical normal ratio is 1.16x. The empirical tail is 45% fatter."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_3_cvar/01_cvar_tail_visualization.png" alt="CVaR Tail" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">CVaR Tail Visualisation</div>
-          <div class="card-desc">CVaR = average loss beyond VaR. HS 99% CVaR: $31,791 vs VaR $18,887 — ratio of 1.68x vs normal's 1.16x. Tail is 45% fatter.</div>
+          <div class="card-desc">CVaR = average loss beyond VaR. HS 99% CVaR: $31,791 vs VaR $18,887: ratio of 1.68x vs normal's 1.16x. Tail is 45% fatter.</div>
           <span class="tag">Phase 3</span>
         </div>
       </div>
       <div class="card" data-category="var"
            data-title="VaR vs CVaR Bar Comparison"
-           data-desc="Historical CVaR consistently exceeds Parametric and Monte Carlo CVaR — the empirical tail is heavier than any normal-distribution model captures. The gap widens at 99% where the normal assumption breaks down most severely."
+           data-desc="Historical CVaR consistently exceeds Parametric and Monte Carlo CVaR: the empirical tail is heavier than any normal-distribution model captures. The gap widens at 99% where the normal assumption breaks down most severely."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_3_cvar/02_var_vs_cvar_bars.png" alt="VaR vs CVaR Bars" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">VaR vs CVaR — Bar Comparison</div>
+          <div class="card-title">VaR vs CVaR: Bar Comparison</div>
           <div class="card-desc">Historical CVaR exceeds Parametric and MC at both confidence levels. Gap widens at 99% where the normal assumption fails hardest.</div>
           <span class="tag">Phase 3</span>
         </div>
       </div>
       <div class="card" data-category="var"
-           data-title="VaR vs CVaR — Distribution View"
-           data-desc="The CVaR region beyond the VaR threshold is not symmetric or thin — there is meaningful probability mass at extreme losses. Historical method reads this directly; parametric methods smooth it away with the normal assumption."
+           data-title="VaR vs CVaR: Distribution View"
+           data-desc="The CVaR region beyond the VaR threshold is not symmetric or thin: there is meaningful probability mass at extreme losses. Historical method reads this directly; parametric methods smooth it away with the normal assumption."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_3_cvar/03_var_vs_cvar_distribution.png" alt="VaR vs CVaR Distribution" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">VaR vs CVaR — Distribution View</div>
+          <div class="card-title">VaR vs CVaR: Distribution View</div>
           <div class="card-desc">Meaningful probability mass sits beyond VaR in the empirical distribution. Normal models smooth this away.</div>
           <span class="tag">Phase 3</span>
         </div>
@@ -507,31 +509,31 @@
   <!-- PHASE 4: BACKTESTING -->
   <div class="section" data-section="backtest">
     <div class="section-header">
-      <div class="section-title">Phase 4 — Backtesting (Kupiec + Christoffersen)</div>
+      <div class="section-title">Phase 4: Backtesting (Kupiec + Christoffersen)</div>
       <div class="section-desc">
-        Rolling 252-day out-of-sample VaR forecasts tested against actual returns using two statistical tests. Kupiec tests whether exception frequency is correct. Christoffersen tests whether exceptions cluster — a model passes only if breaches are random and independent. All three static models fail both tests at 99%. After one VaR breach, another the next day is 10x more likely (π11 = 14.3%). This failure motivates GARCH in Phase 7.
+        Rolling 252-day out-of-sample VaR forecasts tested against actual returns using two statistical tests. Kupiec tests whether exception frequency is correct. Christoffersen tests whether exceptions cluster: a model passes only if breaches are random and independent. All three static models fail both tests at 99%. After one VaR breach, another the next day is 10x more likely (π11 = 14.3%). This failure motivates GARCH in Phase 7.
       </div>
     </div>
     <div class="grid wide">
       <div class="card" data-category="backtest"
            data-title="Rolling VaR vs Actual Returns"
-           data-desc="The static VaR line barely widens during 2020 — it has no memory of the volatility regime change. Many returns pierce the threshold in clusters, especially March 2020. A model with no memory of yesterday's shock sets the same threshold as yesterday, regardless of what just happened."
+           data-desc="The static VaR line barely widens during 2020: it has no memory of the volatility regime change. Many returns pierce the threshold in clusters, especially March 2020. A model with no memory of yesterday's shock sets the same threshold as yesterday, regardless of what just happened."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_4_backtesting/01_rolling_var_vs_returns.png" alt="Rolling VaR" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Rolling VaR vs Actual Returns</div>
-          <div class="card-desc">Static VaR barely widens during 2020. Breaches cluster precisely where the model should be widening — it has no memory of the regime shift.</div>
+          <div class="card-desc">Static VaR barely widens during 2020. Breaches cluster precisely where the model should be widening: it has no memory of the regime shift.</div>
           <span class="tag">Phase 4</span>
         </div>
       </div>
       <div class="card" data-category="backtest"
            data-title="VaR Exception Timeline"
-           data-desc="Exceptions plotted over time for all three methods. They visibly cluster around March 2020 and 2022. A good model's exceptions should be scattered randomly across the timeline — clustering proves the model cannot adapt to volatility regimes."
+           data-desc="Exceptions plotted over time for all three methods. They visibly cluster around March 2020 and 2022. A good model's exceptions should be scattered randomly across the timeline: clustering proves the model cannot adapt to volatility regimes."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_4_backtesting/02_exception_timeline.png" alt="Exception Timeline" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">VaR Exception Timeline</div>
-          <div class="card-desc">Exceptions cluster visibly in 2020 and 2022. π11 = 14.3% for HS — after one breach, another the next day is 10x more likely than the unconditional rate.</div>
+          <div class="card-desc">Exceptions cluster visibly in 2020 and 2022. π11 = 14.3% for HS: after one breach, another the next day is 10x more likely than the unconditional rate.</div>
           <span class="tag">Phase 4</span>
         </div>
       </div>
@@ -541,48 +543,48 @@
   <!-- PHASE 5: STRESS TESTING -->
   <div class="section" data-section="stress">
     <div class="section-header">
-      <div class="section-title">Phase 5 — Stress Testing</div>
+      <div class="section-title">Phase 5: Stress Testing</div>
       <div class="section-desc">
-        Historical crisis scenarios (GFC 2008–09, COVID 2020, Rate Shock 2022) and a hypothetical liquidity shock applied to the portfolio, benchmarked against VaR and CVaR. Every crisis scenario exceeds the 99% VaR threshold. COVID's worst single day was 4.14x the 99% VaR. The 2022 rate shock broke the negative stock-bond correlation assumed in the covariance matrix — both safety assets fell alongside equities.
+        Historical crisis scenarios (GFC 2008–09, COVID 2020, Rate Shock 2022) and a hypothetical liquidity shock applied to the portfolio, benchmarked against VaR and CVaR. Every crisis scenario exceeds the 99% VaR threshold. COVID's worst single day was 4.14x the 99% VaR. The 2022 rate shock broke the negative stock-bond correlation assumed in the covariance matrix: both safety assets fell alongside equities.
       </div>
     </div>
     <div class="grid">
       <div class="card" data-category="stress"
            data-title="GFC 2008–09 Drawdown"
-           data-desc="The 2008 Global Financial Crisis produced a 28.9% total drawdown. Daily moves were less extreme than COVID — the crisis unfolded over months rather than days, giving more time to react but sustaining losses far longer."
+           data-desc="The 2008 Global Financial Crisis produced a 28.9% total drawdown. Daily moves were less extreme than COVID: the crisis unfolded over months rather than days, giving more time to react but sustaining losses far longer."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_5_stress_testing/01_gfc_drawdown.png" alt="GFC Drawdown" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">GFC 2008–09 Drawdown</div>
-          <div class="card-desc">28.9% total drawdown unfolding over months. Worst single day: 0.23% — the crisis built slowly but sustained for far longer than COVID.</div>
+          <div class="card-desc">28.9% total drawdown unfolding over months. Worst single day: 0.23%: the crisis built slowly but sustained for far longer than COVID.</div>
           <span class="tag">Phase 5</span>
         </div>
       </div>
       <div class="card" data-category="stress"
-           data-title="COVID Crash — Feb–Mar 2020"
-           data-desc="The fastest crash in market history: 7.81% worst single day — 4.14x the 99% VaR of $18,887. The portfolio lost 29.5% peak-to-trough in weeks. VaR models calibrated on recent calm data had no chance of anticipating this — the threshold needed to be 4x wider."
+           data-title="COVID Crash: Feb–Mar 2020"
+           data-desc="The fastest crash in market history: 7.81% worst single day: 4.14x the 99% VaR of $18,887. The portfolio lost 29.5% peak-to-trough in weeks. VaR models calibrated on recent calm data had no chance of anticipating this: the threshold needed to be 4x wider."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_5_stress_testing/02_covid_crash_drawdown.png" alt="COVID Drawdown" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">COVID Crash — Feb–Mar 2020</div>
-          <div class="card-desc">Worst single day: 7.81% — 4.14x the 99% VaR. Portfolio lost 29.5% peak-to-trough in weeks. Fastest crash in history.</div>
+          <div class="card-title">COVID Crash: Feb–Mar 2020</div>
+          <div class="card-desc">Worst single day: 7.81%: 4.14x the 99% VaR. Portfolio lost 29.5% peak-to-trough in weeks. Fastest crash in history.</div>
           <span class="tag">Phase 5</span>
         </div>
       </div>
       <div class="card" data-category="stress"
            data-title="Rate Shock 2022"
-           data-desc="The 2022 rate shock exposed a structural flaw: TLT and LQD fell alongside equities, breaking the negative correlation that diversification relies on. Both safety assets failed simultaneously — the covariance matrix embedded in the portfolio became invalid precisely when it was needed."
+           data-desc="The 2022 rate shock exposed a structural flaw: TLT and LQD fell alongside equities, breaking the negative correlation that diversification relies on. Both safety assets failed simultaneously: the covariance matrix embedded in the portfolio became invalid precisely when it was needed."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_5_stress_testing/03_rate_shock_drawdown.png" alt="Rate Shock" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Rate Shock 2022</div>
-          <div class="card-desc">Both TLT and LQD fell alongside equities — the stock-bond negative correlation failed. Safety assets provided no protection at the worst moment.</div>
+          <div class="card-desc">Both TLT and LQD fell alongside equities: the stock-bond negative correlation failed. Safety assets provided no protection at the worst moment.</div>
           <span class="tag">Phase 5</span>
         </div>
       </div>
       <div class="card" data-category="stress"
            data-title="Stress Test vs VaR / CVaR Reference"
-           data-desc="Every crisis scenario plotted against the 99% VaR and CVaR reference lines. The hypothetical liquidity shock reaches 5.49x VaR, COVID 4.14x, Rate Shock 1.99x. Tail risk is not adequately captured by any static model — stress testing is the only method that can surface these magnitudes."
+           data-desc="Every crisis scenario plotted against the 99% VaR and CVaR reference lines. The hypothetical liquidity shock reaches 5.49x VaR, COVID 4.14x, Rate Shock 1.99x. Tail risk is not adequately captured by any static model: stress testing is the only method that can surface these magnitudes."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_5_stress_testing/04_stress_test_vs_var.png" alt="Stress vs VaR" loading="lazy"/>
         <div class="card-body">
@@ -593,22 +595,22 @@
       </div>
       <div class="card" data-category="stress"
            data-title="Crisis Paths Comparison"
-           data-desc="Cumulative drawdown paths across all historical crises side by side. COVID and GFC both reached ~29% total loss via very different trajectories — one acute and violent, one slow and grinding."
+           data-desc="Cumulative drawdown paths across all historical crises side by side. COVID and GFC both reached ~29% total loss via very different trajectories: one acute and violent, one slow and grinding."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_5_stress_testing/05_crisis_paths_comparison.png" alt="Crisis Paths" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Crisis Paths Comparison</div>
-          <div class="card-desc">All crises overlaid. COVID and GFC both hit ~29% total loss via opposite trajectories — acute crash vs slow grind.</div>
+          <div class="card-desc">All crises overlaid. COVID and GFC both hit ~29% total loss via opposite trajectories: acute crash vs slow grind.</div>
           <span class="tag">Phase 5</span>
         </div>
       </div>
       <div class="card" data-category="stress"
-           data-title="Risk Dashboard — Full Summary"
+           data-title="Risk Dashboard: Full Summary"
            data-desc="Six-panel publication-quality figure: cumulative return and drawdown, VaR/CVaR summary table, rolling VaR vs actual returns, exception timeline, stress test bar chart, and backtesting results table. All key results in one view."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_6_dashboard/risk_dashboard.png" alt="Risk Dashboard" loading="lazy"/>
         <div class="card-body">
-          <div class="card-title">Risk Dashboard — Full Summary</div>
+          <div class="card-title">Risk Dashboard: Full Summary</div>
           <div class="card-desc">Six-panel summary: cumulative return, drawdown, VaR/CVaR table, rolling backtest, exception timeline, stress test bar chart.</div>
           <span class="tag">Phase 6</span>
         </div>
@@ -619,26 +621,26 @@
   <!-- PHASE 7: GARCH -->
   <div class="section" data-section="garch">
     <div class="section-header">
-      <div class="section-title">Phase 7 — GARCH(1,1) with Student-t Innovations</div>
+      <div class="section-title">Phase 7: GARCH(1,1) with Student-t Innovations</div>
       <div class="section-desc">
-        Phase 4 showed all three static models fail both backtests at 99%. Root cause: static windows are blind to volatility regimes. GARCH(1,1) models time-varying conditional volatility — VaR thresholds automatically widen after large shocks. Pairing with Student-t innovations corrects the fat-tail underestimation. GARCH-t is the only model of five that passes both Kupiec and Christoffersen at 99%.
+        Phase 4 showed all three static models fail both backtests at 99%. Root cause: static windows are blind to volatility regimes. GARCH(1,1) models time-varying conditional volatility: VaR thresholds automatically widen after large shocks. Pairing with Student-t innovations corrects the fat-tail underestimation. GARCH-t is the only model of five that passes both Kupiec and Christoffersen at 99%.
       </div>
     </div>
     <div class="grid">
       <div class="card" data-category="garch"
            data-title="GARCH Conditional Volatility vs Actual Returns"
-           data-desc="GARCH conditional volatility spikes sharply during March 2020 and late 2022. A static rolling window would still be averaging calm pre-crisis days into the estimate — GARCH reacts within one day. This is the mechanism that reduces exception clustering."
+           data-desc="GARCH conditional volatility spikes sharply during March 2020 and late 2022. A static rolling window would still be averaging calm pre-crisis days into the estimate: GARCH reacts within one day. This is the mechanism that reduces exception clustering."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_7_garch/01_garch_conditional_volatility.png" alt="GARCH Conditional Vol" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">GARCH Conditional Volatility</div>
-          <div class="card-desc">Conditional vol spikes sharply in 2020 and 2022. Static windows average calm days into the estimate — GARCH reacts within one day.</div>
+          <div class="card-desc">Conditional vol spikes sharply in 2020 and 2022. Static windows average calm days into the estimate: GARCH reacts within one day.</div>
           <span class="tag">Phase 7</span>
         </div>
       </div>
       <div class="card" data-category="garch"
            data-title="VaR Model Comparison: HS vs GARCH-Normal vs GARCH-t"
-           data-desc="GARCH-t (red) sits consistently above Historical Simulation (blue) during calm periods and widens dramatically during stress — the opposite of what a static model does. This is the dynamic threshold that allows GARCH-t to absorb volatility regime shifts and pass both backtests."
+           data-desc="GARCH-t (red) sits consistently above Historical Simulation (blue) during calm periods and widens dramatically during stress: the opposite of what a static model does. This is the dynamic threshold that allows GARCH-t to absorb volatility regime shifts and pass both backtests."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_7_garch/02_var_model_comparison.png" alt="VaR Model Comparison" loading="lazy"/>
         <div class="card-body">
@@ -654,7 +656,7 @@
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_7_garch/03_hs_vs_garch_normal_vs_garch_t.png" alt="Exception Comparison" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Exception Scatter: All Three Models</div>
-          <div class="card-desc">HS: 35 exceptions, clustered. GARCH-Normal: 43, less clustered. GARCH-t: 24 vs 22.6 expected, near-random — the only model that passes both tests.</div>
+          <div class="card-desc">HS: 35 exceptions, clustered. GARCH-Normal: 43, less clustered. GARCH-t: 24 vs 22.6 expected, near-random: the only model that passes both tests.</div>
           <span class="tag">Phase 7</span>
         </div>
       </div>
@@ -664,9 +666,9 @@
   <!-- PHASE 8: OPTIMIZER -->
   <div class="section" data-section="optimizer">
     <div class="section-header">
-      <div class="section-title">Phase 8 — Efficient Frontier &amp; Portfolio Optimization</div>
+      <div class="section-title">Phase 8: Efficient Frontier &amp; Portfolio Optimization</div>
       <div class="section-desc">
-        Phases 1–7 treated equal-weighting as given. Phase 8 solves the mean-variance optimization problem with long-only constraints across 60 target return levels to trace the efficient frontier, then extracts three portfolios: Minimum Variance, Maximum Sharpe (tangency), and Equal Weight (benchmark). The equal-weight portfolio sits inside the frontier — it is mean-variance inefficient. Portfolio construction choices directly affect tail risk, not just normal-times volatility.
+        Phases 1–7 treated equal-weighting as given. Phase 8 solves the mean-variance optimization problem with long-only constraints across 60 target return levels to trace the efficient frontier, then extracts three portfolios: Minimum Variance, Maximum Sharpe (tangency), and Equal Weight (benchmark). The equal-weight portfolio sits inside the frontier: it is mean-variance inefficient. Portfolio construction choices directly affect tail risk, not just normal-times volatility.
       </div>
     </div>
     <div class="grid wide">
@@ -677,13 +679,13 @@
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_8_optimizer/01_efficient_frontier.png" alt="Efficient Frontier" loading="lazy"/>
         <div class="card-body">
           <div class="card-title">Efficient Frontier</div>
-          <div class="card-desc">Equal-weight portfolio sits inside the frontier — it is mean-variance inefficient. Both optimised portfolios dominate it on a risk-adjusted basis.</div>
+          <div class="card-desc">Equal-weight portfolio sits inside the frontier: it is mean-variance inefficient. Both optimised portfolios dominate it on a risk-adjusted basis.</div>
           <span class="tag">Phase 8</span>
         </div>
       </div>
       <div class="card" data-category="optimizer"
            data-title="Optimised Portfolio Weights"
-           data-desc="Minimum Variance concentrates in LQD (lowest vol at 8.6%), GLD, and TLT — equities receive minimal allocation. Maximum Sharpe concentrates in QQQ and SPY (highest Sharpe assets); TLT receives near-zero weight due to its negative Sharpe over the period. Equal weight spreads evenly — simple but suboptimal on both dimensions."
+           data-desc="Minimum Variance concentrates in LQD (lowest vol at 8.6%), GLD, and TLT: equities receive minimal allocation. Maximum Sharpe concentrates in QQQ and SPY (highest Sharpe assets); TLT receives near-zero weight due to its negative Sharpe over the period. Equal weight spreads evenly: simple but suboptimal on both dimensions."
            onclick="openLightbox(this)">
         <img src="https://raw.githubusercontent.com/kshitijbhandari/Multi-Asset-Portfolio-Risk-Engine-VaR-CVaR-Backtesting-Stress-Testing/main/results/phase_8_optimizer/02_portfolio_weights.png" alt="Portfolio Weights" loading="lazy"/>
         <div class="card-body">
