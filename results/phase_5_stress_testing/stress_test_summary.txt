@@ -1,0 +1,17 @@
+── Stress Test vs VaR/CVaR Summary ─────────────────────
+
+                   1-Day Worst (%) Total Loss (%) 1-Day Worst ($)  \
+GFC (2008–09)                0.23%         28.88%          $2,292   
+COVID (2020)                 7.81%         29.46%         $78,102   
+Rate Shock (2022)            3.75%         18.75%         $37,526   
+Hypothetical Shock          10.38%         10.38%        $103,750   
+── 99% VaR (ref)             1.89%          1.89%         $18,887   
+── 99% CVaR (ref)            3.18%          3.18%         $31,791   
+
+                   Total Loss ($) vs 99% VaR  
+GFC (2008–09)            $288,750      0.12x  
+COVID (2020)             $294,565      4.14x  
+Rate Shock (2022)        $187,521      1.99x  
+Hypothetical Shock       $103,750      5.49x  
+── 99% VaR (ref)          $18,887      1.00x  
+── 99% CVaR (ref)         $31,791      1.68x

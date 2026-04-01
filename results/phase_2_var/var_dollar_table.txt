@@ -1,0 +1,4 @@
+── Dollar VaR (Portfolio Value = $1,000,000) ──────────────
+        Historical Sim ($) Parametric ($) Monte Carlo ($)
+95% VaR            $10,610        $12,132         $11,891
+99% VaR            $18,887        $17,159         $17,007

@@ -1,0 +1,13 @@
+── Full Backtesting Results: 95% and 99% VaR ───────────
+
+  ── 95% VaR ──────────────────────────────────────────
+  Method          N    Rate    Kupiec   CC Test
+  HS            123  5.438%     PASS ✓     FAIL ✗
+  Parametric    106  4.686%     PASS ✓     FAIL ✗
+  MC            105  4.642%     PASS ✓     FAIL ✗
+
+  ── 99% VaR ──────────────────────────────────────────
+  Method          N    Rate    Kupiec   CC Test
+  HS             35  1.547%     FAIL ✗     FAIL ✗
+  Parametric     50  2.210%     FAIL ✗     FAIL ✗
+  MC             49  2.166%     FAIL ✗     FAIL ✗

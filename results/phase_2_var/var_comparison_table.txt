@@ -1,0 +1,4 @@
+── VaR Comparison Table ─────────────────────────────────
+         Historical Sim (%)  Parametric (%)  Monte Carlo (%)
+95% VaR              1.0610          1.2132           1.1891
+99% VaR              1.8887          1.7159           1.7007

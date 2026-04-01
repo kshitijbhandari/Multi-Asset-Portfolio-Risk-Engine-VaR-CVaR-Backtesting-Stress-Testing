@@ -1,0 +1,11 @@
+── Full VaR vs CVaR Comparison ──────────────────────────
+
+            HS VaR (%)  HS CVaR (%)  Param VaR (%)  Param CVaR (%)  \
+Confidence                                                           
+95%             1.0610       1.7442         1.2132          1.5215   
+99%             1.8887       3.1791         1.7159          1.9659   
+
+            MC VaR (%)  MC CVaR (%)  
+Confidence                           
+95%             1.1891       1.5127  
+99%             1.7007       1.9787
