@@ -18,6 +18,10 @@ raw_data.csv
 # Generated images (re-run notebooks to reproduce)
 *.png
 
+# Allow gallery images in results/
+!results/
+!results/**/*.png
+
 # PDF files
 *.pdf
 
